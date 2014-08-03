@@ -1,0 +1,29 @@
+{
+  "name": "WordspaceGenerator",
+  "version": "0.0.1",
+  "description": "",
+  "keywords": [
+  ],
+  "homepage": "https://github.com/iraladson/WordspaceGenerator",
+  "bugs": {
+    "url": "http://github.com/iraladson/WordspaceGenerator/issues",
+    "email": "aladso@saic.edu"
+  },
+  "author": "Anthony Ladson (http://anthonyladson.com)",
+  "directories": {
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/iraladson/WordspaceGenerator.git"
+  },
+  "dependencies" : {
+    
+  },
+  "engines": {
+    "node": ">=v0.10.0"
+  },
+  "license": {
+    "url": "https://raw.github.com/iraladson/WordspaceGenerator",
+    "type": "MIT"
+  }
+}
