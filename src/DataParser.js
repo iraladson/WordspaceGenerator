@@ -19,7 +19,7 @@ function DataParser(name,callback){
 }
 
 DataParser.prototype.parse = function(txtfile){
-	this.parser.parse('../test/'+txtfile);
+	this.parser.parse('../'+txtfile);
 }
 
 module.exports = DataParser;
