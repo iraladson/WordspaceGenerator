@@ -6,20 +6,33 @@ function GoogNGram2Parser(callback){
 	var self = this;
 	this.callback = callback;
 
-	this.parse = function(txtfile){
-		fs.readFile(txtfile,'utf8',function(error,data){
-		if(error, data){
-			if(error) throw error
-			var tables = [];
+	this.parse = function(name,type,txtfile){
+		console.log(txtfile);
 
-			var dataArray = self.filterDates(data);
-			var ngrams = self.getNGrams(dataArray);
-			
-			GoogNGram2Parser.createWordxWordTable('5gram',ngrams,self.callback,function(gram){
-				return gram.split("_")[0];
-			});
-		}
-	});
+		fs.readFile(txtfile,'utf8',function(error,data){
+			if(error, data){
+				if(error) throw error
+
+				var tables = [];
+
+				var dataArray = self.filterDates(data);
+				var ngrams = self.getNGrams(dataArray);
+				
+				if(type == 'wordGram'){
+					GoogNGram2Parser.createWordxWordTable(name,ngrams,self.callback,function(gram){
+						return gram.split("_")[0];
+					});
+				} else if(type == 'posGram'){
+					GoogNGram2Parser.createPosXPosTable(name,ngrams,self.callback,function(gram){
+						return gram;
+					})
+				} else if(type == 'wordposGram'){
+
+				} else if(type == 'dependency'){
+
+				}
+			}
+		});
 	}
 }
 
@@ -28,12 +41,12 @@ function GoogNGram2Parser(callback){
 //name: @String. Name of table
 //ngrams: @ngram object array. [{ngram:[n1,n2,...nx], frequency: Number},...]
 //notation: @String. Any special notation seperating words
-GoogNGram2Parser.createWordxWordTable = function(name,ngrams,callback,func){
+GoogNGram2Parser.createWordxWordTable = function(name,ngrams,callback,annotationFunc){
 	var table = new CooccurenceTable(name);
 
 	for (var i = 0; i < ngrams.length; i++) {
 		var ngram = ngrams[i].ngram;
-		var wordGram = GoogNGram2Parser.removePOS(ngram,func);
+		var wordGram = GoogNGram2Parser.removeAnnotation(ngram,annotationFunc);
 
 		var row = wordGram[0];
 		var column = wordGram[wordGram.length-1];
@@ -49,7 +62,28 @@ GoogNGram2Parser.createWordxWordTable = function(name,ngrams,callback,func){
 	callback(table);
 }
 
-GoogNGram2Parser.removePOS = function(ngram,func){
+GoogNGram2Parser.createPosXPosTable = function(name,ngrams,callback,annotationFunc){
+	var table = new CooccurenceTable(name);
+
+	for (var i = 0; i < ngrams.length; i++) {
+		var ngram = ngrams[i].ngram;
+		var posGram = GoogNGram2Parser.removeAnnotation(ngram,annotationFunc);
+
+		var row = posGram[0];
+		var column = posGram[posGram.length-1];
+		var frequency = ngrams[i].frequency;
+
+		table.createRow(row);
+		table.createColumn(column);
+		table.addValue(row,column,frequency);
+	};
+
+	table.fill();
+
+	callback(table);
+}
+
+GoogNGram2Parser.removeAnnotation = function(ngram,func){
 	var ngramArray = ngram.split(' ');
 	var gram = [];
 

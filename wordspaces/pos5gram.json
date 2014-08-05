@@ -1,0 +1,81 @@
+{
+    "rows": [
+        {
+            "element": "_DET_",
+            "row": [
+                539410099,
+                374903397,
+                1018690482,
+                441010678,
+                350007863,
+                1288831348,
+                1431327841,
+                41046195,
+                3077870802,
+                1736578484,
+                179421843,
+                1203008045,
+                1520089,
+                655783589
+            ]
+        }
+    ],
+    "columns": [
+        {
+            "element": "_PRON_",
+            "index": 0
+        },
+        {
+            "element": "_CONJ_",
+            "index": 1
+        },
+        {
+            "element": "_ADJ_",
+            "index": 2
+        },
+        {
+            "element": "_ADV_",
+            "index": 3
+        },
+        {
+            "element": "_PRT_",
+            "index": 4
+        },
+        {
+            "element": "_DET_",
+            "index": 5
+        },
+        {
+            "element": "_._",
+            "index": 6
+        },
+        {
+            "element": "_X_",
+            "index": 7
+        },
+        {
+            "element": "_NOUN_",
+            "index": 8
+        },
+        {
+            "element": "_VERB_",
+            "index": 9
+        },
+        {
+            "element": "_NUM_",
+            "index": 10
+        },
+        {
+            "element": "_ADP_",
+            "index": 11
+        },
+        {
+            "element": "__",
+            "index": 12
+        },
+        {
+            "element": "_END_",
+            "index": 13
+        }
+    ]
+}
