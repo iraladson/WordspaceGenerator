@@ -16,19 +16,29 @@ function GoogNGram2Parser(callback){
 				var tables = [];
 
 				var dataArray = self.filterDates(data);
-				var ngrams = self.getNGrams(dataArray);
 				
 				if(type == 'wordGram'){
-					GoogNGram2Parser.createWordxWordTable(name,ngrams,self.callback,function(gram){
+					var ngrams = self.getNGrams(dataArray);
+
+					GoogNGram2Parser.createTable(name,ngrams,self.callback,function(gram){
 						return gram.split("_")[0];
 					});
 				} else if(type == 'posGram'){
-					GoogNGram2Parser.createPosXPosTable(name,ngrams,self.callback,function(gram){
+					var ngrams = self.getNGrams(dataArray);
+
+					GoogNGram2Parser.createTable(name,ngrams,self.callback,function(gram){
 						return gram;
 					})
 				} else if(type == 'wordposGram'){
 
-				} else if(type == 'dependency'){
+				} else if(type == 'wordDependency'){
+
+				} else if(type == 'posDependency'){
+					var dependencies = self.getDependencies(dataArray);
+
+					GoogNGram2Parser.createTable(name,dependencies,callback,function(gram){
+						return gram;
+					});
 
 				}
 			}
@@ -41,37 +51,16 @@ function GoogNGram2Parser(callback){
 //name: @String. Name of table
 //ngrams: @ngram object array. [{ngram:[n1,n2,...nx], frequency: Number},...]
 //notation: @String. Any special notation seperating words
-GoogNGram2Parser.createWordxWordTable = function(name,ngrams,callback,annotationFunc){
+GoogNGram2Parser.createTable = function(name,data,callback,annotationFunc){
 	var table = new CooccurenceTable(name);
 
-	for (var i = 0; i < ngrams.length; i++) {
-		var ngram = ngrams[i].ngram;
-		var wordGram = GoogNGram2Parser.removeAnnotation(ngram,annotationFunc);
+	for (var i = 0; i < data.length; i++) {
+		var datum = data[i].data;
+		var xGram = GoogNGram2Parser.removeAnnotation(datum,annotationFunc);
 
-		var row = wordGram[0];
-		var column = wordGram[wordGram.length-1];
-		var frequency = ngrams[i].frequency;
-
-		table.createRow(row);
-		table.createColumn(column);
-		table.addValue(row,column,frequency);
-	};
-
-	table.fill();
-
-	callback(table);
-}
-
-GoogNGram2Parser.createPosXPosTable = function(name,ngrams,callback,annotationFunc){
-	var table = new CooccurenceTable(name);
-
-	for (var i = 0; i < ngrams.length; i++) {
-		var ngram = ngrams[i].ngram;
-		var posGram = GoogNGram2Parser.removeAnnotation(ngram,annotationFunc);
-
-		var row = posGram[0];
-		var column = posGram[posGram.length-1];
-		var frequency = ngrams[i].frequency;
+		var row = xGram[0];
+		var column = xGram[xGram.length-1];
+		var frequency = data[i].frequency;
 
 		table.createRow(row);
 		table.createColumn(column);
@@ -86,7 +75,6 @@ GoogNGram2Parser.createPosXPosTable = function(name,ngrams,callback,annotationFu
 GoogNGram2Parser.removeAnnotation = function(ngram,func){
 	var ngramArray = ngram.split(' ');
 	var gram = [];
-
 	for (var i = 0; i < ngramArray.length; i++) {
 		gram.push(func(ngramArray[i]));
 	};
@@ -111,17 +99,32 @@ GoogNGram2Parser.prototype.getNGrams = function(dataArray){
 			ngrams[ngrams.length-1].frequency += parseInt(dataArray[i][2]);
 		} else {
 			data = dataArray[i];
-			ngrams.push({ngram:data[0],frequency:parseInt(data[2])});
+			ngrams.push({data:data[0],frequency:parseInt(data[2])});
 		}
 	};
 
 	return ngrams;
 }
 
-GoogNGram2Parser.prototype.getDependencyTrees = function(dataArray){
-	var trees = [];
-	var data = {};
+GoogNGram2Parser.prototype.getDependencies = function(dataArray){
+	var dependencies = [];
+	var data = [];
 
+	for (var i = 0; i < dataArray.length; i++) {
+		var dependency = dataArray[i][0];
+
+		if(data[0] == dependency){
+			dependencies[dependencies.length-1].frequency += parseInt(dataArray[i][2]);
+		} else {
+			data = dataArray[i];
+			//for compatiability with removeAnnotation().
+			//data needs to be a string seperated by a ' '
+			var d = data[0].split('=>');  
+			dependencies.push({data:d[0]+" "+d[1], frequency:parseInt(data[2])});
+		}
+	};
+
+	return dependencies;
 }
 
 GoogNGram2Parser.prototype.filterDates = function(data){
